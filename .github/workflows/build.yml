@@ -1,0 +1,26 @@
+name: Build QMK Firmware
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/qmk/qmk_cli
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Compile
+        run: qmk compile -kb handwired/corydora -km default
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: corydora-firmware
+          path: |
+            *.uf2
+            .build/*.uf2
