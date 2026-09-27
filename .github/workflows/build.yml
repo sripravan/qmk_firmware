@@ -1,4 +1,4 @@
-name: Build QMK Firmware
+name: Build Corydora
 
 on:
   workflow_dispatch:
@@ -6,21 +6,23 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    container:
-      image: ghcr.io/qmk/qmk_cli
+    container: ghcr.io/qmk/qmk_cli
 
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Compile
+      - name: Set QMK home
+        run: qmk setup -H $GITHUB_WORKSPACE --yes
+
+      - name: Compile firmware
+        working-directory: ${{ github.workspace }}
         run: qmk compile -kb handwired/corydora -km default
 
       - uses: actions/upload-artifact@v4
         with:
-          name: corydora-firmware
+          name: corydora-uf2
           path: |
             *.uf2
             .build/*.uf2
